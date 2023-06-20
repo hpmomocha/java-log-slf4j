@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- log4j2.xml文件结构如下:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration>
+    <Properties>
+    </Properties>
+    <Appenders>
+    </Appenders>
+    <Loggers>
+    </Loggers>
+</Configuration>
+-->
+<!-- monitorInterval 属性值（秒数）为一个非零值来让 Log4j 每隔指定的秒数来重新读取配置文件，可以用来动态应用 Log4j 配置。-->
+<Configuration status="error" monitorInterval="30">
+    <Properties>
+        <Property name="logBaseDir">C:/work/tutorials/SpringCloud/java-log-slf4j/slf4j-log4j2/logs</Property>
+    </Properties>
+    <!-- -->
+    <Appenders>
+        <!-- 控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- 控制台只输出 level以及以上级别的日志, 其他直接拒绝 -->
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY" />
+            <!-- 日志输出格式 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %t %5p [%c:%L] - %m%n" />
+        </Console>
+
+        <File name="log" fileName="${logBaseDir}/log4j2.log" append="false">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %t %5p [%c:%L] - %m%n" />
+        </File>
+
+        <File name="log-error" fileName="${logBaseDir}/log4j2-error.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %t %5p [%c:%L] - %m%n" />
+        </File>
+
+        <RollingFile name="RollingFile" fileName="${logBaseDir}/log4j2-rolling.log"
+                     filePattern="${logBaseDir}/$${date:yyyy-MM}/log4j2-rolling-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %t %5p [%c:%L] - %m%n" />
+            <SizeBasedTriggeringPolicy size="2MB" />
+        </RollingFile>
+    </Appenders>
+
+    <!-- 定义 Logger, 只有定义了 Logger 并引入的 appender 才会生效 -->
+    <Loggers>
+        <root level="trace">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Console"/>
+            <appender-ref ref="log-error"/>
+            <appender-ref ref="log"/>
+        </root>
+    </Loggers>
+</Configuration>
